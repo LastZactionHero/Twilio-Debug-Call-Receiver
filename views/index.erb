@@ -1,0 +1,49 @@
+<script type="text/javascript">
+	TOKEN = "<%= token %>";
+</script>
+<script type="text/javascript" src="js/receiver.js"></script>
+
+
+<h1>Call Receiver</h1>
+
+<h2 class="separator">Call Status</h2>
+<div class='well'>
+	<span class="span4">
+		<p id="log">Loading...</p>
+	</span>
+	
+	<span class="span4">
+		<span id='accept' class="btn btn-success">Answer</span>&nbsp;
+		<span id='hangup' class="btn btn-danger">Hangup</span>
+	</span>
+</div>
+
+<h2 class="separator">Send Digit</h2>
+<div class="btn-group">
+	<% (0..9).each do |i| %>
+    	<button class="btn digit"><%= i %></button>
+	<% end %>
+    <button class="btn digit">*</button>
+    <button class="btn digit">#</button>
+</div>
+    
+<h2 class="separator">Call Parameters</h2>
+<table class='table'>
+	<tr>
+		<th>Property</th>
+		<th>Value</th>
+	</tr>
+	<tr><td>CallSid</td><td><span id='param-callsid'></td></tr>
+	<tr><td>From</td><td><span id='param-from'></td></tr>
+	<tr><td>To</td><td><span id='param-to'></td></tr>	
+</table>
+
+<h2 class="separator">Incoming Phone Numbers</h2>
+<% phone_numbers.each do |number| %>
+	<h4><%= number.delete(:phone_number) %></h4>
+	<table>
+		<% number.keys.each do |key| %>
+			<tr><td><%= key %>:&nbsp;&nbsp;</td><td><%= number[key] %></td></tr>
+		<% end %>
+	</table>
+<% end %>
