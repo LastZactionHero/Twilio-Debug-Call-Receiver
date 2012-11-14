@@ -5,14 +5,16 @@ require 'sinatra/content_for'
 require "sinatra/config_file"
 require 'twilio-ruby'
 
-config_file 'settings.yml'
+# Load heroku vars from local file
+heroku_env = File.join('heroku_env.rb')
+load(heroku_env) if File.exists?(heroku_env)
 
 get '/' do
-  capability = Twilio::Util::Capability.new settings.twilio_account_sid, settings.twilio_auth_token
-  capability.allow_client_incoming settings.twilio_client_name  
+  capability = Twilio::Util::Capability.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+  capability.allow_client_incoming "client"
   token = capability.generate
   
-  client = Twilio::REST::Client.new settings.twilio_account_sid, settings.twilio_auth_token
+  client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
   phone_numbers = client.account.incoming_phone_numbers.list.map{ |number| { 
         :sid => number.sid, 
         :phone_number => number.phone_number, 
@@ -27,6 +29,6 @@ get '/' do
 end
 
 get '/twilio/incoming' do
-  Twilio::TwiML::Response.new { |r| r.Dial { |d| d.Client settings.twilio_client_name } }.text
+  Twilio::TwiML::Response.new { |r| r.Dial { |d| d.Client "client" } }.text
 end
  
